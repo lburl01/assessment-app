@@ -60,7 +60,9 @@ edits; reference how `styled-system` handles this.
 - [ ] Each player should be contained in a `ListItem` component
 - [ ] Use `Box`/`Flex` components to layout the player attributes
 - [ ] A player's `jersey_number` will be editable, so use a `TextInput`
-      component for that attribute. Other attributes can be
+      component for that attribute.
+      
+(The remaing player attributes can be static text.)
 
 ### Tasks
 
