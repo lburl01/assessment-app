@@ -5,4 +5,24 @@ class TeamsController < ApplicationController
 
     render json: @teams
   end
+
+  # PATCH /conferences/:conference_id/teams/:id
+  def update
+    @team = Team.find_by(id: params[:id], conference_id: params[:conference_id])
+
+    if @team.update_attributes(team_params)
+      render json: @team
+    else
+      render json: { errors: @team.errors.full_messages }
+    end
+  end
+
+  private def team_params
+    params.require(:team).permit(
+      :conference_id,
+      :id,
+      :losses,
+      :wins
+    )
+  end
 end
