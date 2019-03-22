@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import { Box, Button, FormLabel, TextInput } from '@untappd/components'
 
-const WinLossForm = ({ team, handleSubmit }) => {
+const WinLossForm = ({ disableButton, handleSubmit, team }) => {
   const [wins, setWins] = useState(team.wins)
   const [losses, setLosses] = useState(team.losses)
 
@@ -31,6 +31,7 @@ const WinLossForm = ({ team, handleSubmit }) => {
         />
       </Box>
       <Button
+        disabled={disableButton}
         onClick={() => handleSubmit(team.conference_id, team.id, wins, losses)}
       >
         Update Wins/Losses
