@@ -25,3 +25,4 @@
 /config/master.key
 node_modules
 /db/*.sqlite3
+db/development.sqlite3
