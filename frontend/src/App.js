@@ -32,6 +32,14 @@ class App extends Component {
 
   async handleWinsLossesUpdate(conferenceId, teamId, wins, losses) {
     this.setState({ error: '' })
+    if (
+      wins < 0 ||
+      losses < 0 ||
+      !Number.isInteger(wins) ||
+      !Number.isInteger(losses)
+    ) {
+      return Toaster.red('Values must be positive, whole numbers.')
+    }
     try {
       await axios.patch(
         `${BASE_URL}/conferences/${conferenceId}/teams/${teamId}`,

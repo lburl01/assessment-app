@@ -11,8 +11,9 @@ const WinLossForm = ({ team, handleSubmit }) => {
       <Box>
         <FormLabel htmlFor="wins-input">Wins</FormLabel>
         <TextInput
-          id="wins-input"
           defaultValue={wins}
+          id="wins-input"
+          min={0}
           name="wins"
           onChange={e => setWins(e.target.value)}
           type="number"
@@ -21,8 +22,9 @@ const WinLossForm = ({ team, handleSubmit }) => {
       <Box>
         <FormLabel htmlFor="losses-input">Losses</FormLabel>
         <TextInput
-          id="losses-input"
           defaultValue={losses}
+          id="losses-input"
+          min={0}
           name="losses"
           onChange={e => setLosses(e.target.value)}
           type="number"
