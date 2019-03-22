@@ -13,6 +13,7 @@ class App extends Component {
     this.state = {
       conference: null,
       error: '',
+      isFetching: false,
       isSubmitting: false,
       teams: [],
     }
@@ -26,13 +27,48 @@ class App extends Component {
       const data = response.data
       this.setState({
         conference: data.conference,
-        teams: data.teams.map(team => ({ ...team, shouldShowPlayers: false })),
+        teams: data.teams.map(team => ({
+          ...team,
+          shouldShowPlayers: false,
+          players: [],
+        })),
       })
     })
   }
 
   componentDidMount() {
     this.fetchData()
+  }
+
+  async fetchPlayers(conferenceId, teamId) {
+    if (
+      this.state.teams.find(
+        team => team.id === teamId && team.players.length > 1,
+      )
+    ) {
+      return this.setState({ isFetching: false })
+    }
+    try {
+      await axios
+        .get(
+          `${BASE_URL}/conferences/${conferenceId}/teams/${teamId}/players`,
+          { mode: 'no-cors' },
+        )
+        .then(response => {
+          const stateCopy = JSON.parse(JSON.stringify(this.state))
+          stateCopy.teams.map(team => {
+            if (team.id === teamId) {
+              team.players = response.data
+            }
+            return team
+          })
+          this.setState({ teams: stateCopy.teams })
+        })
+    } catch (error) {
+      console.warn(error)
+    } finally {
+      this.setState({ isFetching: false })
+    }
   }
 
   async handleWinsLossesUpdate(conferenceId, teamId, wins, losses) {
@@ -69,7 +105,7 @@ class App extends Component {
     }
   }
 
-  toggleShouldShowPlayers(teamId) {
+  toggleShouldShowPlayers(conferenceId, teamId) {
     const stateCopy = JSON.parse(JSON.stringify(this.state))
     const newTeamsState = stateCopy.teams.map(team => {
       if (team.id === teamId) {
@@ -77,11 +113,13 @@ class App extends Component {
       }
       return team
     })
-    this.setState({ teams: newTeamsState })
+    this.setState({ teams: newTeamsState, isFetching: true }, () =>
+      this.fetchPlayers(conferenceId, teamId),
+    )
   }
 
   render() {
-    const { conference, isSubmitting, teams } = this.state
+    const { conference, isFetching, isSubmitting, teams } = this.state
 
     if (conference === null) {
       return <h3>loading</h3>
@@ -97,7 +135,11 @@ class App extends Component {
           <Card key={team.id} mb={3}>
             <Card.Header>
               <Heading>
-                <Link onClick={() => this.toggleShouldShowPlayers(team.id)}>
+                <Link
+                  onClick={() =>
+                    this.toggleShouldShowPlayers(team.conference_id, team.id)
+                  }
+                >
                   {team.name} {team.mascot}
                 </Link>
               </Heading>
@@ -110,11 +152,11 @@ class App extends Component {
                 handleSubmit={this.handleWinsLossesUpdate}
               />
             </Card.Header>
-            {team.shouldShowPlayers && (
+            {team.shouldShowPlayers && !isFetching && (
               <Card.Content>
-                <li>Players</li>
-                <li>go</li>
-                <li>here</li>
+                {team.players.map(player => (
+                  <li key={player.id}>{player.name}</li>
+                ))}
               </Card.Content>
             )}
           </Card>
