@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import { Box, Card, Heading, Toaster } from '@untappd/components'
+import { Box, Card, Heading, Link, Toaster } from '@untappd/components'
 
 import WinLossForm from './WinLossForm'
 
@@ -13,16 +13,21 @@ class App extends Component {
     this.state = {
       conference: null,
       error: '',
+      isSubmitting: false,
       teams: [],
     }
 
     this.handleWinsLossesUpdate = this.handleWinsLossesUpdate.bind(this)
+    this.toggleShouldShowPlayers = this.toggleShouldShowPlayers.bind(this)
   }
 
   fetchData() {
     axios.get(BASE_URL, { mode: 'no-cors' }).then(response => {
       const data = response.data
-      this.setState({ conference: data.conference, teams: data.teams })
+      this.setState({
+        conference: data.conference,
+        teams: data.teams.map(team => ({ ...team, shouldShowPlayers: false })),
+      })
     })
   }
 
@@ -31,14 +36,16 @@ class App extends Component {
   }
 
   async handleWinsLossesUpdate(conferenceId, teamId, wins, losses) {
-    this.setState({ error: '' })
+    this.setState({ error: '', isSubmitting: true })
     if (
       wins < 0 ||
       losses < 0 ||
-      !Number.isInteger(wins) ||
-      !Number.isInteger(losses)
+      !Number.isInteger(Number(wins)) ||
+      !Number.isInteger(Number(losses))
     ) {
-      return Toaster.red('Values must be positive, whole numbers.')
+      return this.setState({ isSubmitting: false }, () =>
+        Toaster.red('Values must be positive, whole numbers.'),
+      )
     }
     try {
       await axios.patch(
@@ -52,16 +59,29 @@ class App extends Component {
         { mode: 'no-cors' },
       )
     } catch (error) {
-      this.setState({ error: error.response.data.errors })
+      this.setState({ error: error.response.data.errors, isSubmitting: false })
     } finally {
-      return this.state.error
-        ? Toaster.red(this.state.error)
-        : Toaster.green('Success')
+      this.setState({ isSubmitting: false }, () =>
+        this.state.error
+          ? Toaster.red(this.state.error)
+          : Toaster.green('Success'),
+      )
     }
   }
 
+  toggleShouldShowPlayers(teamId) {
+    const stateCopy = JSON.parse(JSON.stringify(this.state))
+    const newTeamsState = stateCopy.teams.map(team => {
+      if (team.id === teamId) {
+        team.shouldShowPlayers = !team.shouldShowPlayers
+      }
+      return team
+    })
+    this.setState({ teams: newTeamsState })
+  }
+
   render() {
-    const { conference, teams } = this.state
+    const { conference, isSubmitting, teams } = this.state
 
     if (conference === null) {
       return <h3>loading</h3>
@@ -77,20 +97,26 @@ class App extends Component {
           <Card key={team.id} mb={3}>
             <Card.Header>
               <Heading>
-                {team.name} {team.mascot} • Coached By: {team.coach}
+                <Link onClick={() => this.toggleShouldShowPlayers(team.id)}>
+                  {team.name} {team.mascot}
+                </Link>
               </Heading>
+              <Heading>Coached By: {team.coach}</Heading>
             </Card.Header>
             <Card.Header>
               <WinLossForm
+                disableButton={isSubmitting}
                 team={team}
                 handleSubmit={this.handleWinsLossesUpdate}
               />
             </Card.Header>
-            <Card.Content>
-              <li>Player's</li>
-              <li>go</li>
-              <li>here</li>
-            </Card.Content>
+            {team.shouldShowPlayers && (
+              <Card.Content>
+                <li>Players</li>
+                <li>go</li>
+                <li>here</li>
+              </Card.Content>
+            )}
           </Card>
         ))}
       </Box>
