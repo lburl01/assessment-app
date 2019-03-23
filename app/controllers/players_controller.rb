@@ -13,7 +13,7 @@ class PlayersController < ApplicationController
     if @player.update_attributes(player_params)
       render json: @player
     else
-      render json: { errors: @player.errors.full_messages }
+      render json: { errors: @player.errors.full_messages }, status: 422
     end
   end
 

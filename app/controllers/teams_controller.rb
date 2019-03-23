@@ -13,7 +13,7 @@ class TeamsController < ApplicationController
     if @team.update_attributes(team_params)
       render json: @team
     else
-      render json: { errors: @team.errors.full_messages }
+      render json: { errors: @team.errors.full_messages }, status: 422
     end
   end
 
