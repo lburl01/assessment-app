@@ -1,6 +1,14 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import { Box, Card, Heading, Link, Toaster } from '@untappd/components'
+import {
+  Box,
+  Card,
+  Heading,
+  Link,
+  List,
+  ListItem,
+  Toaster,
+} from '@untappd/components'
 
 import WinLossForm from './WinLossForm'
 
@@ -153,11 +161,21 @@ class App extends Component {
               />
             </Card.Header>
             {team.shouldShowPlayers && !isFetching && (
-              <Card.Content>
+              <List>
                 {team.players.map(player => (
-                  <li key={player.id}>{player.name}</li>
+                  <ListItem key={player.id}>
+                    <ListItem.Content>
+                      <ListItem.Heading>{player.name}</ListItem.Heading>
+                      <ListItem.Info>
+                        Jersey: {player.jersey_number}
+                      </ListItem.Info>
+                      <ListItem.Info>Position: {player.position}</ListItem.Info>
+                      <ListItem.Info>Height: {player.height}</ListItem.Info>
+                      <ListItem.Info>Weight: {player.weight}</ListItem.Info>
+                    </ListItem.Content>
+                  </ListItem>
                 ))}
-              </Card.Content>
+              </List>
             )}
           </Card>
         ))}
