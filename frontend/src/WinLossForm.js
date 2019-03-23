@@ -9,10 +9,10 @@ const WinLossForm = ({ disableButton, handleSubmit, team }) => {
   return (
     <>
       <Box>
-        <FormLabel htmlFor="wins-input">Wins</FormLabel>
+        <FormLabel htmlFor={`wins-input-${team.id}`}>Wins</FormLabel>
         <TextInput
           defaultValue={wins}
-          id="wins-input"
+          id={`wins-input-${team.id}`}
           min={0}
           name="wins"
           onChange={e => setWins(e.target.value)}
@@ -20,10 +20,10 @@ const WinLossForm = ({ disableButton, handleSubmit, team }) => {
         />
       </Box>
       <Box>
-        <FormLabel htmlFor="losses-input">Losses</FormLabel>
+        <FormLabel htmlFor={`losses-input-${team.id}`}>Losses</FormLabel>
         <TextInput
           defaultValue={losses}
-          id="losses-input"
+          id={`losses-input-${team.id}`}
           min={0}
           name="losses"
           onChange={e => setLosses(e.target.value)}
