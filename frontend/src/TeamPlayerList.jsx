@@ -35,7 +35,6 @@ class TeamPlayerList extends Component {
 
   async fetchPlayers() {
     const { conference_id, id } = this.state.team
-    // TODO: figure out better way of knowing whether to update players or not
     if (this.state.players.length > 1) return
     this.setState({ isFetching: true })
     try {
@@ -51,7 +50,6 @@ class TeamPlayerList extends Component {
     }
   }
 
-  // TODO: Only clear out errors that have not been resolved
   clearErrors(playerId) {
     return this.setState({
       errors: { ...this.state.errors, [playerId]: '' },
