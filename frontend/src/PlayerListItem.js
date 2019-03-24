@@ -2,12 +2,7 @@ import React from 'react'
 
 import { ListItem, TextInput, Toggle } from '@untappd/components'
 
-const PlayerListItem = ({
-  conferenceId,
-  errors,
-  handlePlayerUpdate,
-  player,
-}) => (
+const PlayerListItem = ({ errors, handlePlayerUpdate, player }) => (
   <ListItem>
     <ListItem.Content>
       <ListItem.Heading>{player.name}</ListItem.Heading>
@@ -20,12 +15,7 @@ const PlayerListItem = ({
           min={0}
           name="jersey-number"
           onBlur={e =>
-            handlePlayerUpdate(
-              'jersey_number',
-              conferenceId,
-              player,
-              e.target.value,
-            )
+            handlePlayerUpdate('jersey_number', player, e.target.value)
           }
           type="number"
         />
@@ -37,9 +27,7 @@ const PlayerListItem = ({
           id={`starter=${player.id}`}
           width={44}
           checked={player.starter}
-          onChange={val =>
-            handlePlayerUpdate('starter', conferenceId, player, val)
-          }
+          onChange={val => handlePlayerUpdate('starter', player, val)}
         />
       </ListItem.Info>
       <ListItem.Info>Position: {player.position}</ListItem.Info>
