@@ -7,6 +7,9 @@ FactoryBot.define do
     losses { 1 }
 
     trait :with_players do
+      after(:create) do |team|
+        team.players << create(:player, team: team)
+      end
     end
   end
 end
