@@ -22,9 +22,10 @@ RSpec.describe TeamsController do
     end
 
     it 'returns json failure response with team errors' do
-      test_update(wins: 'waffles')
+      test_update(wins: 'super bad thing that is not a number')
       assert_json(response)
-      expect(response).to have_http_status(:ok)
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.parsed_body['errors']).to eq ['Wins is not a number']
     end
   end
 
@@ -36,7 +37,7 @@ RSpec.describe TeamsController do
     patch conference_team_path(
       conference_id: conference.id,
       id: team.id,
-      params: { team: { wins: 1, losses: 1 }}
+      params: { team: { wins: wins, losses: losses }}
     ), as: :json
   end
 end
