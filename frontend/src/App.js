@@ -80,6 +80,7 @@ class App extends Component {
   }
 
   refreshTeam(res) {
+    // TODO: refactor state deep copier into util
     const stateCopy = JSON.parse(JSON.stringify(this.state))
     const newTeamsState = stateCopy.teams.map(team => {
       if (team.id === res.data.id) {
