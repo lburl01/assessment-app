@@ -10,18 +10,25 @@ class TeamPlayerList extends Component {
     super(props)
 
     this.state = {
-      responseError: '',
       errors: {},
+      responseError: '',
     }
 
     this.clearErrors = this.clearErrors.bind(this)
     this.handleUpdate = this.handleUpdate.bind(this)
+    this.handleSuccess = this.handleSuccess.bind(this)
   }
 
   clearErrors(playerId) {
     return this.setState({
       errors: { ...this.state.errors, [playerId]: '' },
+      responseError: '',
     })
+  }
+
+  handleSuccess(playerId) {
+    Toaster.green('Jersey successfully updated')
+    return this.clearErrors(playerId)
   }
 
   async handleUpdate(conferenceId, player, newVal) {
@@ -52,7 +59,7 @@ class TeamPlayerList extends Component {
     } finally {
       return this.state.responseError
         ? Toaster.red(this.state.responseError)
-        : this.clearErrors(player.id)
+        : this.handleSuccess(player.id)
     }
   }
 
@@ -72,7 +79,7 @@ class TeamPlayerList extends Component {
                   id={`jersey-input-${player.id}`}
                   min={0}
                   name="jersey-number"
-                  onChange={e =>
+                  onBlur={e =>
                     this.handleUpdate(
                       team.conference_id,
                       player,
