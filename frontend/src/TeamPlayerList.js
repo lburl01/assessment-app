@@ -44,12 +44,13 @@ class TeamPlayerList extends Component {
         })
         .then(res => this.setState({ players: res.data }))
     } catch (error) {
-      console.warn(error)
+      Toaster.red(error)
     } finally {
       this.setState({ isFetching: false })
     }
   }
 
+  // TODO: Only clear out errors that have not been resolved
   clearErrors(playerId) {
     return this.setState({
       errors: { ...this.state.errors, [playerId]: '' },
@@ -58,8 +59,8 @@ class TeamPlayerList extends Component {
   }
 
   handleSuccess(playerId) {
+    this.clearErrors(playerId)
     Toaster.green('Player successfully updated')
-    return this.clearErrors(playerId)
   }
 
   async handleUpdate(attr, player, newVal) {
@@ -77,17 +78,21 @@ class TeamPlayerList extends Component {
       }
     }
     try {
-      await axios.patch(
-        `${BASE_URL}/conferences/${conference_id}/teams/${id}/players/${
-          player.id
-        }`,
-        {
-          player: {
-            [attr]: newVal,
+      await axios
+        .patch(
+          `${BASE_URL}/conferences/${conference_id}/teams/${id}/players/${
+            player.id
+          }`,
+          {
+            player: {
+              [attr]: newVal,
+            },
           },
-        },
-        { mode: 'no-cors' },
-      )
+          { mode: 'no-cors' },
+        )
+        .then(res => {
+          this.setState({ players: [...this.state.players, ...res.data] })
+        })
     } catch (error) {
       this.setState({ responseError: error.response.data.errors })
     } finally {
@@ -99,8 +104,11 @@ class TeamPlayerList extends Component {
 
   render() {
     const { players } = this.state
-    const { shouldShowPlayers } = this.props.team
-    if (!shouldShowPlayers) return null
+    const { isFetching, shouldShowPlayers } = this.props.team
+
+    if (!shouldShowPlayers || isFetching) return null
+
+    console.log('rendering players', this.state.players)
     return (
       <List>
         {players.map(player => (
