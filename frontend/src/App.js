@@ -33,7 +33,6 @@ class App extends Component {
         teams: data.teams.map(team => ({
           ...team,
           shouldShowPlayers: false,
-          players: [],
         })),
       })
     })
@@ -45,6 +44,7 @@ class App extends Component {
 
   async handleWinsLossesUpdate(conferenceId, teamId, wins, losses) {
     this.setState({ error: '', isSubmitting: true })
+    // TODO: refactor into validator
     if (
       wins < 0 ||
       losses < 0 ||
@@ -84,7 +84,10 @@ class App extends Component {
     const stateCopy = JSON.parse(JSON.stringify(this.state))
     const newTeamsState = stateCopy.teams.map(team => {
       if (team.id === res.data.id) {
-        team = res.data
+        team = {
+          ...res.data,
+          shouldShowPlayers: team.shouldShowPlayers,
+        }
       }
       return team
     })
