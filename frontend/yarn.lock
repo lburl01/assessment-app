@@ -986,14 +986,15 @@
     "@types/unist" "*"
     "@types/vfile-message" "*"
 
-"@untappd/components@^1.0.0-beta.9":
-  version "1.0.0-beta.9"
-  resolved "https://registry.yarnpkg.com/@untappd/components/-/components-1.0.0-beta.9.tgz#5e8196282be9f3bfcfeef80fb0b5db26186c4d66"
-  integrity sha512-bbQX6+7KiQC0QeFTU0zd6QMgI5kvl5Vjxois11IiuxdF7UaA87CE3RGts8fAhXd1VtSCIeIYi2r2livgk3azEw==
+"@untappd/components@^1.0.0-beta.13":
+  version "1.0.0-beta.13"
+  resolved "https://registry.yarnpkg.com/@untappd/components/-/components-1.0.0-beta.13.tgz#246f07e7f7d16b0eea54586e5dfef0d443b72c38"
+  integrity sha512-dWaN7mKweuRBLtNtY+QuEPWpC4a5659jXJsLD6IzwsJmZkt3ZSDhdMHz/5tPH9VQrni+7Oj7IP5DMbCblXXsww==
   dependencies:
     downshift "^3.2.6"
     react-modal "^3.8.1"
     react-select "^2.4.1"
+    react-switch "^4.1.0"
     react-tabs "^3.0.0"
     react-tooltip "^3.9.2"
     react-transition-group "^2.6.0"
@@ -8406,6 +8407,13 @@ react-select@^2.4.1:
     raf "^3.4.0"
     react-input-autosize "^2.2.1"
     react-transition-group "^2.2.1"
+
+react-switch@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/react-switch/-/react-switch-4.1.0.tgz#93379df044c9febe86d0b1485cb14b2a364562b6"
+  integrity sha512-mINolJx85ZojtsKdH+DE+p9i073a1mQscEADF6y/FLBshSmyciZffBWP0xu8jWyqRIg7tWykFLJt+2xlMya7sw==
+  dependencies:
+    prop-types "^15.6.2"
 
 react-tabs@^3.0.0:
   version "3.0.0"
