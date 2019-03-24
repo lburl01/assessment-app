@@ -24,7 +24,7 @@ class TeamPlayerList extends Component {
     this.handleSuccess = this.handleSuccess.bind(this)
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     if (
       prevProps.team.shouldShowPlayers !== this.props.team.shouldShowPlayers &&
       this.props.team.shouldShowPlayers
@@ -91,7 +91,14 @@ class TeamPlayerList extends Component {
           { mode: 'no-cors' },
         )
         .then(res => {
-          this.setState({ players: [...this.state.players, ...res.data] })
+          const stateCopy = JSON.parse(JSON.stringify(this.state))
+          const updatedPlayers = stateCopy.players.map(player => {
+            if (player.id === res.data.id) {
+              player = res.data
+            }
+            return player
+          })
+          this.setState({ players: updatedPlayers })
         })
     } catch (error) {
       this.setState({ responseError: error.response.data.errors })
@@ -108,7 +115,6 @@ class TeamPlayerList extends Component {
 
     if (!shouldShowPlayers || isFetching) return null
 
-    console.log('rendering players', this.state.players)
     return (
       <List>
         {players.map(player => (
