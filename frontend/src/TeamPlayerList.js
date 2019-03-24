@@ -90,6 +90,9 @@ class TeamPlayerList extends Component {
                   type="number"
                 />
               </ListItem.Info>
+              <ListItem.Info>
+                Starter: {player.starter.toString()}
+              </ListItem.Info>
               <ListItem.Info>Position: {player.position}</ListItem.Info>
               <ListItem.Info>Height: {player.height}</ListItem.Info>
               <ListItem.Info>Weight: {player.weight}</ListItem.Info>

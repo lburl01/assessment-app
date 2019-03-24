@@ -1,12 +1,14 @@
 class PlayersController < ApplicationController
   before_action :set_team
-  # GET /players
+
+  # GET /conferences/:conference_id/teams/:team_id/players
   def index
     @players = @team.players
 
     render json: @players
   end
 
+  # PATCH /conferences/:conference_id/teams/:team_id/players/:id
   def update
     @player = Player.find(params[:id])
 
@@ -18,7 +20,7 @@ class PlayersController < ApplicationController
   end
 
   private def player_params
-    params.require(:player).permit(:jersey_number)
+    params.require(:player).permit(:jersey_number, :starter)
   end
 
   private def set_team
