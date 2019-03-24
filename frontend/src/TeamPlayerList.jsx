@@ -24,7 +24,7 @@ class TeamPlayerList extends Component {
     this.handleSuccess = this.handleSuccess.bind(this)
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (
       prevProps.team.shouldShowPlayers !== this.props.team.shouldShowPlayers &&
       this.props.team.shouldShowPlayers
@@ -35,6 +35,7 @@ class TeamPlayerList extends Component {
 
   async fetchPlayers() {
     const { conference_id, id } = this.state.team
+    // TODO: figure out better way of knowing whether to update players or not
     if (this.state.players.length > 1) return
     this.setState({ isFetching: true })
     try {
@@ -44,7 +45,7 @@ class TeamPlayerList extends Component {
         })
         .then(res => this.setState({ players: res.data }))
     } catch (error) {
-      Toaster.red(error)
+      Toaster.red('Something went wrong')
     } finally {
       this.setState({ isFetching: false })
     }
@@ -67,7 +68,7 @@ class TeamPlayerList extends Component {
     const { conference_id, id } = this.state.team
     this.clearErrors(player.id)
     if (attr === 'jersey_number') {
-      if (Number(newVal) === player.jersey_number) return
+      if (Number(newVal) == player.jersey_number) return
       if (!newVal || newVal < 0 || !Number.isInteger(Number(newVal))) {
         return this.setState({
           errors: {
