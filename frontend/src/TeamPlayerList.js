@@ -33,6 +33,7 @@ class TeamPlayerList extends Component {
 
   async handleUpdate(conferenceId, player, newVal) {
     this.clearErrors(player.id)
+    if (Number(newVal) === player.jersey_number) return
     if (!newVal || newVal < 0 || !Number.isInteger(Number(newVal))) {
       return this.setState({
         errors: {
