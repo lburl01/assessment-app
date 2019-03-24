@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import { Box, Card, Heading, Link, Toaster } from '@untappd/components'
+import { Box, Card, Flex, Heading, Link, Toaster } from '@untappd/components'
 
 import WinLossForm from './WinLossForm'
 import TeamPlayerList from './TeamPlayerList'
@@ -44,7 +44,6 @@ class App extends Component {
 
   async handleWinsLossesUpdate(conferenceId, teamId, wins, losses) {
     this.setState({ error: '', isSubmitting: true })
-    // TODO: refactor into validator
     if (
       wins < 0 ||
       losses < 0 ||
@@ -80,7 +79,6 @@ class App extends Component {
   }
 
   refreshTeam(res) {
-    // TODO: refactor state deep copier into util
     const stateCopy = JSON.parse(JSON.stringify(this.state))
     const newTeamsState = stateCopy.teams.map(team => {
       if (team.id === res.data.id) {
@@ -114,30 +112,32 @@ class App extends Component {
 
     return (
       <Box className="App" mx={12} my={5}>
-        <Heading>
+        <Heading mb={3}>
           {conference.short_name} ({conference.name})
         </Heading>
 
         {teams.map(team => (
           <Card key={team.id} mb={3}>
             <Card.Header>
-              <Heading>
-                <Link
-                  onClick={() =>
-                    this.toggleShouldShowPlayers(team.conference_id, team.id)
-                  }
-                >
-                  {team.name} {team.mascot}
-                </Link>
-              </Heading>
-              <Heading>Coached By: {team.coach}</Heading>
-            </Card.Header>
-            <Card.Header>
-              <WinLossForm
-                disableButton={isSubmitting}
-                team={team}
-                handleSubmit={this.handleWinsLossesUpdate}
-              />
+              <Flex>
+                <Heading mr={3}>
+                  <Link
+                    onClick={() =>
+                      this.toggleShouldShowPlayers(team.conference_id, team.id)
+                    }
+                  >
+                    {team.name} {team.mascot}
+                  </Link>
+                </Heading>
+                <Heading mr={3}>Coached By: {team.coach}</Heading>
+              </Flex>
+              <Flex>
+                <WinLossForm
+                  disableButton={isSubmitting}
+                  team={team}
+                  handleSubmit={this.handleWinsLossesUpdate}
+                />
+              </Flex>
             </Card.Header>
             <TeamPlayerList team={team} />
           </Card>
