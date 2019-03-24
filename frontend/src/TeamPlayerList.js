@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import axios from 'axios'
 
-import { List, ListItem, TextInput, Toaster } from '@untappd/components'
+import { List, Toaster } from '@untappd/components'
 
 import { BASE_URL, NUM_INPUT_VALIDATION_ERROR } from './App'
+import PlayerListItem from './PlayerListItem'
 
 class TeamPlayerList extends Component {
   constructor(props) {
@@ -11,12 +12,42 @@ class TeamPlayerList extends Component {
 
     this.state = {
       errors: {},
+      isFetching: false,
+      players: [],
       responseError: '',
+      team: props.team,
     }
 
     this.clearErrors = this.clearErrors.bind(this)
+    this.fetchPlayers = this.fetchPlayers.bind(this)
     this.handleUpdate = this.handleUpdate.bind(this)
     this.handleSuccess = this.handleSuccess.bind(this)
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.team.shouldShowPlayers !== this.props.team.shouldShowPlayers &&
+      this.props.team.shouldShowPlayers
+    ) {
+      return this.fetchPlayers()
+    }
+  }
+
+  async fetchPlayers() {
+    const { conference_id, id } = this.state.team
+    if (this.state.players.length > 1) return
+    this.setState({ isFetching: true })
+    try {
+      await axios
+        .get(`${BASE_URL}/conferences/${conference_id}/teams/${id}/players`, {
+          mode: 'no-cors',
+        })
+        .then(res => this.setState({ players: res.data }))
+    } catch (error) {
+      console.warn(error)
+    } finally {
+      this.setState({ isFetching: false })
+    }
   }
 
   clearErrors(playerId) {
@@ -27,30 +58,32 @@ class TeamPlayerList extends Component {
   }
 
   handleSuccess(playerId) {
-    Toaster.green('Jersey successfully updated')
+    Toaster.green('Player successfully updated')
     return this.clearErrors(playerId)
   }
 
-  async handleUpdate(conferenceId, player, newVal) {
+  async handleUpdate(attr, player, newVal) {
+    const { conference_id, id } = this.state.team
     this.clearErrors(player.id)
-    if (Number(newVal) === player.jersey_number) return
-    if (!newVal || newVal < 0 || !Number.isInteger(Number(newVal))) {
-      return this.setState({
-        errors: {
-          ...this.state.errors,
-          [player.id]: NUM_INPUT_VALIDATION_ERROR,
-        },
-      })
+    if (attr === 'jersey_number') {
+      if (Number(newVal) === player.jersey_number) return
+      if (!newVal || newVal < 0 || !Number.isInteger(Number(newVal))) {
+        return this.setState({
+          errors: {
+            ...this.state.errors,
+            [player.id]: NUM_INPUT_VALIDATION_ERROR,
+          },
+        })
+      }
     }
-    const teamId = player.team_id
     try {
       await axios.patch(
-        `${BASE_URL}/conferences/${conferenceId}/teams/${teamId}/players/${
+        `${BASE_URL}/conferences/${conference_id}/teams/${id}/players/${
           player.id
         }`,
         {
           player: {
-            jersey_number: newVal,
+            [attr]: newVal,
           },
         },
         { mode: 'no-cors' },
@@ -65,39 +98,18 @@ class TeamPlayerList extends Component {
   }
 
   render() {
-    const { team } = this.props
+    const { players } = this.state
+    const { shouldShowPlayers } = this.props.team
+    if (!shouldShowPlayers) return null
     return (
       <List>
-        {team.players.map(player => (
-          <ListItem key={player.id}>
-            <ListItem.Content>
-              <ListItem.Heading>{player.name}</ListItem.Heading>
-              <ListItem.Info>
-                Jersey:
-                <TextInput
-                  defaultValue={player.jersey_number}
-                  error={this.state.errors[player.id]}
-                  id={`jersey-input-${player.id}`}
-                  min={0}
-                  name="jersey-number"
-                  onBlur={e =>
-                    this.handleUpdate(
-                      team.conference_id,
-                      player,
-                      e.target.value,
-                    )
-                  }
-                  type="number"
-                />
-              </ListItem.Info>
-              <ListItem.Info>
-                Starter: {player.starter.toString()}
-              </ListItem.Info>
-              <ListItem.Info>Position: {player.position}</ListItem.Info>
-              <ListItem.Info>Height: {player.height}</ListItem.Info>
-              <ListItem.Info>Weight: {player.weight}</ListItem.Info>
-            </ListItem.Content>
-          </ListItem>
+        {players.map(player => (
+          <PlayerListItem
+            errors={this.state.errors}
+            handlePlayerUpdate={this.handleUpdate}
+            key={player.id}
+            player={player}
+          />
         ))}
       </List>
     )
