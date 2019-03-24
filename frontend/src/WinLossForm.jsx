@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { Box, Button, FormLabel, TextInput } from '@untappd/components'
+import { Box, Button, Flex, FormLabel, TextInput } from '@untappd/components'
 
 const WinLossForm = ({ disableButton, handleSubmit, team }) => {
   const [wins, setWins] = useState(team.wins)
@@ -8,8 +8,7 @@ const WinLossForm = ({ disableButton, handleSubmit, team }) => {
 
   return (
     <>
-      <Box>
-        <FormLabel htmlFor={`wins-input-${team.id}`}>Wins</FormLabel>
+      <Box mr={3}>
         <TextInput
           defaultValue={wins}
           id={`wins-input-${team.id}`}
@@ -17,10 +16,11 @@ const WinLossForm = ({ disableButton, handleSubmit, team }) => {
           name="wins"
           onChange={e => setWins(e.target.value)}
           type="number"
+          width={[1, 1 / 2]}
         />
+        <FormLabel htmlFor={`wins-input-${team.id}`}>Wins</FormLabel>
       </Box>
-      <Box>
-        <FormLabel htmlFor={`losses-input-${team.id}`}>Losses</FormLabel>
+      <Box mr={3}>
         <TextInput
           defaultValue={losses}
           id={`losses-input-${team.id}`}
@@ -28,14 +28,18 @@ const WinLossForm = ({ disableButton, handleSubmit, team }) => {
           name="losses"
           onChange={e => setLosses(e.target.value)}
           type="number"
+          width={[1, 1 / 2]}
         />
+        <FormLabel htmlFor={`losses-input-${team.id}`}>Losses</FormLabel>
       </Box>
-      <Button
-        disabled={disableButton}
-        onClick={() => handleSubmit(team.conference_id, team.id, wins, losses)}
-      >
-        Update Wins/Losses
-      </Button>
+      <Box>
+        <Button
+          disabled={disableButton}
+          onClick={() => handleSubmit(team.conference_id, team.id, wins, losses)}
+        >
+          Update Wins/Losses
+        </Button>
+      </Box>
     </>
   )
 }
